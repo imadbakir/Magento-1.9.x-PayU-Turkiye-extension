@@ -102,8 +102,8 @@ class Payu_PayuCheckout_Model_Shared extends Mage_Payment_Model_Method_Abstract
         $coFields = array();
         $items = $this->getOrder()->getAllItems();
         //$items = $this->getQuote()->getAllItems();
-        $tax_info = $this->getOrder()->getFullTaxInfo();
-        
+        //$tax_info = $this->getOrder()->getFullTaxInfo();
+
         $ORDER_PNAME = array();
         $ORDER_PGROUP = array();
         $ORDER_PCODE = array();
@@ -124,10 +124,15 @@ class Payu_PayuCheckout_Model_Shared extends Mage_Payment_Model_Method_Abstract
                 $ORDER_PRICE[$i] = number_format($_priceIncludingTax, 2, '.', '');
                 $ORDER_QTY[$i] = $item->getQtyOrdered();
 
-                $a = number_format(($_priceIncludingTax - $item->getPrice()), 2, '.', '');
-                $a = $tax_info[$i]['percent'];;
+                //$a = number_format(($_priceIncludingTax - $item->getPrice()), 2, '.', '');
 
-                $ORDER_VAT[$i] = $a;
+                $taxPercent = $item->getTaxPercent();
+                $taxPercent = number_format($taxPercent, 2, '.', '');
+
+                //$a = $tax_info[$i]['percent'];;
+                //$a = $taxPercent;
+
+                $ORDER_VAT[$i] = $taxPercent;
                 $ORDER_PRICE_TYPE[$i] = 'GROSS';
                 $ORDER_PCODE[$i] = $this->cleanString($item->getSku());
                 $ORDER_PINFO[$i] = $this->cleanString($item->getDescription());
@@ -399,7 +404,6 @@ class Payu_PayuCheckout_Model_Shared extends Mage_Payment_Model_Method_Abstract
                 $this->updateInventory($orderid);
 
                 $order->cancel()->save();
-
 
 
             } else if ($response['status'] == 'pending') {
